@@ -1,10 +1,7 @@
 package com.virtualkarma.pushthedeals;
 
-/**
- * Created by sirig on 6/16/15.
- */
-
-import android.os.AsyncTask;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,30 +12,37 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.virtualkarma.pushthedeals.domain.DealSite;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import com.virtualkarma.pushthedeals.parser.RSSFeed;
+import com.virtualkarma.pushthedeals.parser.RSSItem;
+import com.virtualkarma.pushthedeals.util.LoadRSSFeed;
 
 /**
- * Shows the list deals sites.
+ * Created by sirig on 7/7/15.
  */
-public class DealsFragment extends Fragment implements AdapterView.OnItemClickListener{
+public class DealsFragment extends Fragment implements AdapterView.OnItemClickListener {
 
-    private static final String LOG_TAG = DealsFragment.class.getSimpleName();
+
+    private static final String LOG_TAG = DealSiteFragment.class.getSimpleName();
+    protected static final String DEAL_SITE_URL = "deal_site_url";
+    protected static final String DEAL_SITE_NAME = "deal_site_name";
     private ListView mDealsListView;
-    private List<DealSite> dealSitesList = new ArrayList<DealSite>();
-    private DealSitesAdapter mDealSitesAdapter;
-    private FetchDealsSitesTask fetchDealsSitesTask;
-
+    private RSSFeed dealsFeed;
+    private static DealsAdapter mDealsAdapter;
+    private LoadRSSFeed loadRSSFeedTask;
+    private String dealSiteUrl;
+    private String dealSiteName;
 
     public DealsFragment() {
+    }
+
+    public static DealsFragment newInstance(String url, String name) {
+        DealsFragment dealsFragment = new DealsFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(DEAL_SITE_URL, url);
+        bundle.putString(DEAL_SITE_NAME, name);
+        dealsFragment.setArguments(bundle);
+
+        return dealsFragment;
     }
 
     @Override
@@ -46,102 +50,48 @@ public class DealsFragment extends Fragment implements AdapterView.OnItemClickLi
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         mDealsListView = (ListView) rootView.findViewById(R.id.deals_listview);
-        mDealSitesAdapter = new DealSitesAdapter(getActivity());
-        mDealsListView.setAdapter(mDealSitesAdapter);
+        mDealsAdapter = new DealsAdapter(getActivity());
+        mDealsListView.setAdapter(mDealsAdapter);
 
         mDealsListView.setOnItemClickListener(this);
-
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            dealSiteUrl = arguments.getString(DEAL_SITE_URL);
+            dealSiteName = arguments.getString(DEAL_SITE_NAME);
+        }
         return rootView;
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        fetchDealsSitesTask = new FetchDealsSitesTask();
+        getActivity().setTitle(dealSiteName);
+        loadRSSFeedTask = new LoadRSSFeed(getActivity(), dealSiteUrl);
         Log.d(LOG_TAG, "start fetch task");
-        fetchDealsSitesTask.execute();
+        loadRSSFeedTask.execute();
 
     }
+
+
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        
+        String url = ((RSSItem)mDealsAdapter.getItem(position)).getURL();
+        Log.d(LOG_TAG, "Deal url - " + url );
+        openWebPage(url);
     }
 
-    public class FetchDealsSitesTask extends AsyncTask<Void, Void, Void> {
+    public static void loadTaskCompleted(RSSFeed feed) {
+        mDealsAdapter.setDealsFeed(feed);
+        mDealsAdapter.notifyDataSetChanged();
 
-        @Override
-        protected Void doInBackground(Void... params) {
+    }
 
-            HttpURLConnection urlConnection = null;
-            BufferedReader reader = null;
-
-            try {
-
-                final String SITE_LIST_URL = "http://www.virtualkarma.com/deals.txt";
-
-                URL url = new URL(SITE_LIST_URL);
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("GET");
-                urlConnection.connect();
-
-                // Read the input stream into a String
-                InputStream inputStream = urlConnection.getInputStream();
-                List<String> stringList = new ArrayList<String>();
-                if (inputStream == null) {
-                    // Nothing to do.
-                    return null;
-                }
-                reader = new BufferedReader(new InputStreamReader(inputStream));
-
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    stringList.add(line);
-                    Log.d(LOG_TAG, "" + line + "\n");
-                }
-
-                getDealSites(stringList);
-
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "Error ", e);
-
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (final IOException e) {
-                        Log.e(LOG_TAG, "Error closing stream", e);
-                    }
-                }
-            }
-
-            // This will only happen if there was an error getting or parsing the forecast.
-            return null;
-        }
-
-        private void getDealSites(List<String> stringList) {
-            int length = stringList.size();
-            for (int i = 0; i < length; i++) {
-                DealSite dealSite = new DealSite();
-                dealSite.setName(stringList.get(i++));
-                dealSite.setLink(stringList.get(i));
-                dealSite.setEnableNotification(false);
-                dealSite.setNumOfDeals(0);
-                Log.d(LOG_TAG, "" + dealSite);
-                dealSitesList.add(dealSite);
-            }
-
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            mDealSitesAdapter.getDealSiteList().clear();
-            mDealSitesAdapter.getDealSiteList().addAll(dealSitesList);
-            mDealSitesAdapter.notifyDataSetChanged();
+    public void openWebPage(String url) {
+        Uri webpage = Uri.parse(url);
+        Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
+        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+            startActivity(intent);
         }
     }
 }

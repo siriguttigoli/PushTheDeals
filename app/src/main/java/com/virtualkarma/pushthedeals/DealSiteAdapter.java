@@ -15,15 +15,15 @@ import java.util.List;
 /**
  * Created by sirig on 6/17/15.
  */
-public class DealSitesAdapter extends BaseAdapter {
+public class DealSiteAdapter extends BaseAdapter {
 
-    private static final String LOG_TAG = DealSitesAdapter.class.getSimpleName();
+    private static final String LOG_TAG = DealSiteAdapter.class.getSimpleName();
     private Context context;
     private List<DealSite> dealSiteList;
 
-    public DealSitesAdapter(Context context){
+    public DealSiteAdapter(Context context){
         this.context = context;
-        this.dealSiteList = new ArrayList<DealSite>();
+        this.dealSiteList = new ArrayList<>();
     }
 
 

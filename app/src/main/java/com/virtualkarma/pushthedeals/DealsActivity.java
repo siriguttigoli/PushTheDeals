@@ -1,20 +1,32 @@
 package com.virtualkarma.pushthedeals;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
 
-public class MainActivity extends ActionBarActivity {
+public class DealsActivity extends ActionBarActivity {
+
+    private String dealSiteUrl;
+    private String dealSiteName;
+    private DealsFragment dealsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_deals);
+
+        Intent intent = getIntent();
+        dealSiteUrl = intent.getStringExtra(DealsFragment.DEAL_SITE_URL);
+        dealSiteName = intent.getStringExtra(DealsFragment.DEAL_SITE_NAME);
+
+        dealsFragment = DealsFragment.newInstance(dealSiteUrl, dealSiteName);
+
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new DealSiteFragment())
+                    .add(R.id.container, dealsFragment)
                     .commit();
         }
     }
@@ -23,7 +35,7 @@ public class MainActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_deals, menu);
         return true;
     }
 
@@ -41,6 +53,7 @@ public class MainActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
 
 
 }
