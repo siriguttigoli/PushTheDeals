@@ -9,7 +9,7 @@
                 tools:context=".MainActivity$PlaceholderFragment">
 
     <ListView
-        android:id="@+id/deals_listview"
+        android:id="@+id/deals_site_listview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

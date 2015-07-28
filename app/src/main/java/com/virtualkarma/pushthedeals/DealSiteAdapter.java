@@ -1,12 +1,18 @@
 package com.virtualkarma.pushthedeals;
 
-import android.content.Context;
+import android.app.Activity;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.virtualkarma.pushthedeals.dao.DealSiteDao;
 import com.virtualkarma.pushthedeals.domain.DealSite;
 
 import java.util.ArrayList;
@@ -18,11 +24,11 @@ import java.util.List;
 public class DealSiteAdapter extends BaseAdapter {
 
     private static final String LOG_TAG = DealSiteAdapter.class.getSimpleName();
-    private Context context;
     private List<DealSite> dealSiteList;
+    private Activity activity;
 
-    public DealSiteAdapter(Context context){
-        this.context = context;
+    public DealSiteAdapter(Activity activity) {
+        this.activity = activity;
         this.dealSiteList = new ArrayList<>();
     }
 
@@ -51,14 +57,27 @@ public class DealSiteAdapter extends BaseAdapter {
         this.dealSiteList = dealSiteList;
     }
 
+    private View.OnClickListener addClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            int position = (Integer) v.getTag();
+            addToFavorites(position);
+        }
+    };
+
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
 
         View view = convertView;
         ViewHolder viewHolder;
-        if(view == null){
-            view = LayoutInflater.from(context).inflate(R.layout.deal_site_list_item, null);
-            viewHolder = new ViewHolder(view);
+        if (view == null) {
+            view = LayoutInflater.from(activity).inflate(R.layout.deal_site_list_item, null);
+            viewHolder = new ViewHolder(position);
+            viewHolder.relativeLayout = (RelativeLayout) view.findViewById(R.id.relativeLayout);
+            viewHolder.dealSiteTextView = (TextView) viewHolder.relativeLayout.findViewById(R.id
+                    .dealsite_textview);
+            viewHolder.addSiteImageView = (ImageView) viewHolder.relativeLayout.findViewById(R.id.add_to_fav);
+            viewHolder.addSiteImageView.setOnClickListener(addClickListener);
 
             view.setTag(viewHolder);
         } else {
@@ -66,15 +85,65 @@ public class DealSiteAdapter extends BaseAdapter {
         }
 
         viewHolder.dealSiteTextView.setText(dealSiteList.get(position).getName());
+        viewHolder.addSiteImageView.setTag(position);
 
         return view;
     }
 
-    public class ViewHolder{
-        private TextView dealSiteTextView;
+    private void addToFavorites(final int position) {
+        addToPreferences();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
 
-        public ViewHolder(View view){
-            dealSiteTextView = (TextView) view.findViewById(R.id.dealsite_textview);
+                String dealSiteName = dealSiteList.get(position).getName();
+                String dealSiteUrl = dealSiteList.get(position).getLink();
+                try {
+                    DealSiteDao dealSiteDao = new DealSiteDao(activity);
+                    long row = dealSiteDao.insert(dealSiteName, dealSiteUrl);
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (activity instanceof MainActivity) {
+                                ((MainActivity) activity).switchContent(new FavoritesFragment());
+                            }
+                        }
+                    });
+
+                } catch (Exception e) {
+                    Log.e(LOG_TAG, e.getMessage());
+                }
+
+            }
+        }).start();
+
+
+    }
+
+    private void addToPreferences() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity);
+        boolean favAvailable = preferences.getBoolean(MainActivity.FAVORITES_AVAILABLE, false);
+        if (!favAvailable) {
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putBoolean(MainActivity.FAVORITES_AVAILABLE, true);
+            editor.commit();
+        }
+    }
+
+
+    static class ViewHolder {
+        private RelativeLayout relativeLayout;
+        private TextView dealSiteTextView;
+        private ImageView addSiteImageView;
+        private int pos;
+
+        public ViewHolder(int position) {
+            pos = position;
+
+        }
+
+        public int getPos() {
+            return pos;
         }
     }
 }
