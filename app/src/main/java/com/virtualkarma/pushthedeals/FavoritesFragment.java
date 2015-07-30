@@ -15,10 +15,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.virtualkarma.pushthedeals.dao.DealSiteDao;
 import com.virtualkarma.pushthedeals.domain.DealSite;
+import com.virtualkarma.pushthedeals.util.DividerItemDecoration;
 import com.virtualkarma.pushthedeals.util.SimpleItemTouchHelperCallback;
 
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FavoritesFragment extends Fragment implements FloatingActionButton.OnClickListener{
+public class FavoritesFragment extends Fragment implements FloatingActionButton.OnClickListener {
 
     private static final String LOG_TAG = FavoritesFragment.class.getSimpleName();
 
@@ -46,7 +46,7 @@ public class FavoritesFragment extends Fragment implements FloatingActionButton.
         // Required empty public constructor
     }
 
-    public interface OnAddClickedListener{
+    public interface OnAddClickedListener {
         void onAddClicked();
     }
 
@@ -57,13 +57,16 @@ public class FavoritesFragment extends Fragment implements FloatingActionButton.
         // Inflate the layout for this fragment
         View rootview = inflater.inflate(R.layout.fragment_favorites, container, false);
 
-        favRecyclerView = (RecyclerView)rootview.findViewById(R.id.fav_recycler_view);
+        favRecyclerView = (RecyclerView) rootview.findViewById(R.id.fav_recycler_view);
         layoutManager = new LinearLayoutManager(getActivity());
         favRecyclerView.setLayoutManager(layoutManager);
         favRecyclerViewAdapter = new FavRecyclerViewAdapter(new ArrayList<DealSite>(), getActivity());
         favRecyclerView.setAdapter(favRecyclerViewAdapter);
+        DividerItemDecoration itemDecoration = new DividerItemDecoration(getActivity(),
+                LinearLayoutManager.VERTICAL);
+        favRecyclerView.addItemDecoration(itemDecoration);
 
-        floatingActionButton = (FloatingActionButton)rootview.findViewById(R.id.fab);
+        floatingActionButton = (FloatingActionButton) rootview.findViewById(R.id.fab);
         floatingActionButton.setOnClickListener(this);
 
         ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(favRecyclerViewAdapter);
@@ -97,11 +100,9 @@ public class FavoritesFragment extends Fragment implements FloatingActionButton.
     }
 
 
-
     @Override
     public void onClick(View v) {
 
-        Toast.makeText(getActivity(),"Clicked on fab", Toast.LENGTH_SHORT).show();
         callBack.onAddClicked();
 
     }
@@ -116,20 +117,22 @@ public class FavoritesFragment extends Fragment implements FloatingActionButton.
         return results;
     }
 
-    public class FavoritesAsyncTask extends AsyncTask<Void,Void,List<DealSite>>{
+    public class FavoritesAsyncTask extends AsyncTask<Void, Void, List<DealSite>> {
 
         private final String LOG_TAG = FavoritesAsyncTask.class.getSimpleName();
         Context context;
-        public FavoritesAsyncTask(Context context){
+
+        public FavoritesAsyncTask(Context context) {
             this.context = context;
         }
+
         @Override
         protected List<DealSite> doInBackground(Void... params) {
             List<DealSite> favList = new ArrayList<>();
             DealSiteDao dealSiteDao = new DealSiteDao(context);
             try {
                 favList = dealSiteDao.lookup();
-            }catch (Exception e){
+            } catch (Exception e) {
                 Log.e(LOG_TAG, e.getMessage());
             }
             return favList;

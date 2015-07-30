@@ -1,5 +1,8 @@
 package com.virtualkarma.pushthedeals.domain;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Created by sirig on 6/16/15.
  */
@@ -11,6 +14,21 @@ public class DealSite {
     private boolean enableNotification;
 
     public DealSite() {
+
+    }
+
+    public DealSite(JSONObject dealSiteJsonObject) throws JSONException {
+
+        if (dealSiteJsonObject.has("feed_name")) {
+            setName(dealSiteJsonObject.getString("feed_name"));
+        }
+
+        if (dealSiteJsonObject.has("feed_url")) {
+            setLink(dealSiteJsonObject.getString("feed_url"));
+        }
+
+        setNumOfDeals(0);
+        setEnableNotification(false);
 
     }
 

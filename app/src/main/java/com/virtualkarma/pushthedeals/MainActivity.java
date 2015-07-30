@@ -15,7 +15,7 @@ public class MainActivity extends AppCompatActivity implements FavoritesFragment
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
-    protected static final String FAVORITES_AVAILABLE = "favorites_available";
+    public static final String FAVORITES_AVAILABLE = "favorites_available";
     public static final String ADD_TO_FAV = "add_to_favorites";
     SharedPreferences sharedPreferences;
     boolean favoritesAvaiable;
@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity implements FavoritesFragment
 
             } else {
                 getSupportFragmentManager().beginTransaction()
-                        .add(R.id.container, new DealSiteFragment())
+                        .add(R.id.container, new DealSiteFragment(), "deal_site")
                         .commit();
             }
         }
@@ -76,12 +76,21 @@ public class MainActivity extends AppCompatActivity implements FavoritesFragment
 
     @Override
     public void onAddClicked() {
-       switchContent(new DealSiteFragment());
+        switchContent(new DealSiteFragment());
     }
 
-    public void switchContent(Fragment fragment){
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.container, fragment)
-                .commit();
+    public void switchContent(Fragment fragment) {
+        if (fragment instanceof DealSiteFragment) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.container, fragment, "deal_site")
+                    .addToBackStack("fav")
+                    .commit();
+        } else {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.container, fragment)
+                    .commit();
+
+        }
     }
+
 }

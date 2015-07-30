@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.virtualkarma.pushthedeals.dao.DealSiteDao;
@@ -73,10 +73,10 @@ public class DealSiteAdapter extends BaseAdapter {
         if (view == null) {
             view = LayoutInflater.from(activity).inflate(R.layout.deal_site_list_item, null);
             viewHolder = new ViewHolder(position);
-            viewHolder.relativeLayout = (RelativeLayout) view.findViewById(R.id.relativeLayout);
-            viewHolder.dealSiteTextView = (TextView) viewHolder.relativeLayout.findViewById(R.id
+            viewHolder.linearLayout = (LinearLayout) view.findViewById(R.id.relativeLayout);
+            viewHolder.dealSiteTextView = (TextView) viewHolder.linearLayout.findViewById(R.id
                     .dealsite_textview);
-            viewHolder.addSiteImageView = (ImageView) viewHolder.relativeLayout.findViewById(R.id.add_to_fav);
+            viewHolder.addSiteImageView = (ImageView) viewHolder.linearLayout.findViewById(R.id.add_to_fav);
             viewHolder.addSiteImageView.setOnClickListener(addClickListener);
 
             view.setTag(viewHolder);
@@ -85,6 +85,7 @@ public class DealSiteAdapter extends BaseAdapter {
         }
 
         viewHolder.dealSiteTextView.setText(dealSiteList.get(position).getName());
+        viewHolder.addSiteImageView.setVisibility(View.VISIBLE);
         viewHolder.addSiteImageView.setTag(position);
 
         return view;
@@ -132,7 +133,7 @@ public class DealSiteAdapter extends BaseAdapter {
 
 
     static class ViewHolder {
-        private RelativeLayout relativeLayout;
+        private LinearLayout linearLayout;
         private TextView dealSiteTextView;
         private ImageView addSiteImageView;
         private int pos;
