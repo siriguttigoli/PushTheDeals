@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -14,24 +16,21 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
 
 import com.virtualkarma.pushthedeals.parser.RSSFeed;
-import com.virtualkarma.pushthedeals.parser.RSSItem;
 import com.virtualkarma.pushthedeals.util.LoadRSSFeed;
 
 /**
  * Created by sirig on 7/7/15.
  */
-public class DealsFragment extends Fragment implements AdapterView.OnItemClickListener,
+public class DealsFragment extends Fragment implements
         SwipeRefreshLayout.OnRefreshListener {
 
 
     private static final String LOG_TAG = DealSiteFragment.class.getSimpleName();
     protected static final String DEAL_SITE_URL = "deal_site_url";
     protected static final String DEAL_SITE_NAME = "deal_site_name";
-    private ListView dealsListView;
+    private RecyclerView dealsRecyclerView;
     private SwipeRefreshLayout swipeRefreshLayout;
     private RSSFeed dealsFeed;
     private DealsAdapter dealsAdapter;
@@ -57,23 +56,24 @@ public class DealsFragment extends Fragment implements AdapterView.OnItemClickLi
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_deals, container, false);
-        swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.deals_swipe_refresh_layout);
-        dealsListView = (ListView) rootView.findViewById(R.id.deals_listview);
-        dealsAdapter = new DealsAdapter(getActivity());
-        dealsListView.setAdapter(dealsAdapter);
-
-        dealsListView.setOnItemClickListener(this);
-        swipeRefreshLayout.setOnRefreshListener(this);
-        swipeRefreshLayout.setColorSchemeResources(R.color.primary, R.color.accent);
-
-
         Bundle arguments = getArguments();
         if (arguments != null) {
             dealSiteUrl = arguments.getString(DEAL_SITE_URL);
             dealSiteName = arguments.getString(DEAL_SITE_NAME);
         }
         Log.d(LOG_TAG, "onCreateView");
+
+        View rootView = inflater.inflate(R.layout.fragment_deals, container, false);
+        swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.deals_swipe_refresh_layout);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        dealsRecyclerView = (RecyclerView) rootView.findViewById(R.id.deals_recycler_view);
+        dealsRecyclerView.setLayoutManager(layoutManager);
+        dealsAdapter = new DealsAdapter(getActivity(), dealSiteName);
+        dealsRecyclerView.setAdapter(dealsAdapter);
+
+//        dealsListView.setOnItemClickListener(this);
+        swipeRefreshLayout.setOnRefreshListener(this);
+        swipeRefreshLayout.setColorSchemeResources(R.color.primary, R.color.accent);
         return rootView;
     }
 
@@ -135,17 +135,18 @@ public class DealsFragment extends Fragment implements AdapterView.OnItemClickLi
         loadRSSFeedTask.execute();
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        String url = ((RSSItem) dealsAdapter.getItem(position)).getURL();
-        Log.d(LOG_TAG, "Deal url - " + url);
-        openWebPage(url);
-    }
+//    @Override
+//    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//        String url = ((RSSItem) dealsAdapter.getItem(position)).getURL();
+//        Log.d(LOG_TAG, "Deal url - " + url);
+//        openWebPage(url);
+//    }
 
     public void loadTaskCompleted(RSSFeed feed) {
         dealsAdapter.setDealsFeed(feed);
         dealsAdapter.notifyDataSetChanged();
-        progressBarItem.setVisible(false);
+        if (progressBarItem != null)
+            progressBarItem.setVisible(false);
         swipeRefreshLayout.setRefreshing(false);
 
     }

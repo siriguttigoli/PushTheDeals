@@ -54,7 +54,7 @@ public class DealSiteFragment extends Fragment implements AdapterView.OnItemClic
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getActivity().setTitle("Deal Sites");
+        getActivity().setTitle(R.string.title_fragment_deal_site);
         fetchDealsSitesTask = new FetchDealsSitesTask(getActivity());
         Log.d(LOG_TAG, "start fetch task");
         fetchDealsSitesTask.execute();

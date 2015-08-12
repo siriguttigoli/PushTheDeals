@@ -93,7 +93,7 @@ public class FavoritesFragment extends Fragment implements FloatingActionButton.
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getActivity().setTitle("My Deals Sites");
+        getActivity().setTitle(R.string.title_fragment_favorites);
         favoritesAsyncTask = new FavoritesAsyncTask(getActivity());
         Log.d(LOG_TAG, "start fetch task");
         favoritesAsyncTask.execute();
@@ -107,15 +107,6 @@ public class FavoritesFragment extends Fragment implements FloatingActionButton.
 
     }
 
-    private List<DealSite> getDataSet() {
-        List<DealSite> results = new ArrayList();
-        for (int index = 0; index < 20; index++) {
-            DealSite obj = new DealSite();
-            obj.setName("Some name " + index);
-            results.add(index, obj);
-        }
-        return results;
-    }
 
     public class FavoritesAsyncTask extends AsyncTask<Void, Void, List<DealSite>> {
 

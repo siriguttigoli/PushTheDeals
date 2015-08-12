@@ -9,6 +9,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.virtualkarma.pushthedeals.util.Utils;
+
 
 public class MainActivity extends AppCompatActivity implements FavoritesFragment
         .OnAddClickedListener {
@@ -66,12 +68,14 @@ public class MainActivity extends AppCompatActivity implements FavoritesFragment
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        //if (id == R.id.action_settings) {
-        //    return true;
-        //}
+        if (id == R.id.action_settings) {
+            Utils.startSettingsActivity(this);
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
     }
+
 
 
     @Override
@@ -86,6 +90,7 @@ public class MainActivity extends AppCompatActivity implements FavoritesFragment
                     .addToBackStack("fav")
                     .commit();
         } else {
+            getSupportFragmentManager().popBackStack();
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.container, fragment)
                     .commit();

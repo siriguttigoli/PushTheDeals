@@ -68,9 +68,31 @@ public class DealSite {
     public String toString() {
         StringBuilder result = new StringBuilder();
         String NEW_LINE = System.getProperty("line.separator");
-        result.append("Site name - " + name + NEW_LINE);
-        result.append("Link - " + link);
+        result.append("Site name - ");
+        result.append(name);
+        result.append(NEW_LINE);
+        result.append("Link - ");
+        result.append(link);
 
         return result.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        DealSite site = (DealSite) o;
+
+        if (!name.equals(site.name)) return false;
+        return link.equals(site.link);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name.hashCode();
+        result = 31 * result + link.hashCode();
+        return result;
     }
 }

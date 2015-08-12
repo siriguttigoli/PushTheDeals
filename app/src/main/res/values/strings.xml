@@ -2,8 +2,25 @@
     <string name="app_name">PushTheDeals</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_add_favorites">Add to favorites</string>
-    <string name="title_activity_deals">DealsActivity</string>
+    <string name="title_activity_deals">Deals</string>
 
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="action_settings">Settings</string>
+    <string name="tell_friend_email_content">Hi,\n I have downloaded this free android
+        application and find it very useful. It helps find all the latest deals online and in-store. There are a lot of deal sites to choose from.\n Click on the link below to check out the App:\n</string>
+    <string name="tell_friend_email_subject">Download PushTheDeals App </string>
+    <string name="tell_friend_chooser_txt">Tell a friend</string>
+    <string name="title_activity_deal_detail">DealDetailActivity</string>
+    <string name="deal_share">SHARE</string>
+    <string name="share_friend_msg_subject">Checkout this deal!!!</string>
+    <string name="share_friend_msg_content">I found this amazing deal.\n</string>
+    <string name="share_chooser_text">Share with a friend</string>
+    <string name="title_fragment_favorites">My Deals Sites</string>
+    <string name="title_fragment_deal_site">Deal Sites</string>
+
+
+
+
 </resources>

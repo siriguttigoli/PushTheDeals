@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.virtualkarma.pushthedeals.util.Utils;
 
 
 public class DealsActivity extends AppCompatActivity {
@@ -53,9 +54,9 @@ public class DealsActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        //if (id == R.id.action_settings) {
-        //    return true;
-        //}
+        if (id == R.id.action_settings) {
+            Utils.startSettingsActivity(this);
+        }
 
         return super.onOptionsItemSelected(item);
     }
