@@ -28,9 +28,9 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FavoritesFragment extends Fragment implements FloatingActionButton.OnClickListener {
+public class MyListFragment extends Fragment implements FloatingActionButton.OnClickListener {
 
-    private static final String LOG_TAG = FavoritesFragment.class.getSimpleName();
+    private static final String LOG_TAG = MyListFragment.class.getSimpleName();
 
     private FloatingActionButton floatingActionButton;
     private FavRecyclerViewAdapter favRecyclerViewAdapter;
@@ -43,7 +43,7 @@ public class FavoritesFragment extends Fragment implements FloatingActionButton.
 
     private ItemTouchHelper itemTouchHelper;
 
-    public FavoritesFragment() {
+    public MyListFragment() {
         // Required empty public constructor
     }
 
