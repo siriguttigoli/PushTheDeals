@@ -19,7 +19,10 @@ package com.virtualkarma.pushthedeals.util;
 import android.graphics.Canvas;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.View;
+
+import com.virtualkarma.pushthedeals.BackgroundContainer;
 
 /**
  * An implementation of {@link android.support.v7.widget.helper.ItemTouchHelper.Callback} that enables basic drag & drop and
@@ -33,12 +36,16 @@ import android.view.View;
  */
 public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
+    private static final String LOG_TAG = SimpleItemTouchHelperCallback.class.getSimpleName();
+
     public static final float ALPHA_FULL = 1.0f;
 
     private final ItemTouchHelperAdapter mAdapter;
+    private BackgroundContainer backgroundContainer;
 
-    public SimpleItemTouchHelperCallback(ItemTouchHelperAdapter adapter) {
+    public SimpleItemTouchHelperCallback(ItemTouchHelperAdapter adapter, BackgroundContainer backgroundContainer) {
         mAdapter = adapter;
+        this.backgroundContainer = backgroundContainer;
     }
 
     @Override
@@ -71,6 +78,7 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
         // Notify the adapter of the move
         mAdapter.onItemMove(source.getAdapterPosition(), target.getAdapterPosition());
+        Log.d(LOG_TAG, "onMove");
         return true;
     }
 
@@ -83,28 +91,15 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
     @Override
     public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
         if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
-            View itemView = viewHolder.itemView;
+            if(dX > 0) {
+                View itemView = viewHolder.itemView;
+                backgroundContainer.showBackground(itemView.getTop(), itemView.getHeight());
 
-//            Paint paint = new Paint();
-//
-//            paint.setColor(Color.parseColor("#FFC107"));
-//
-//
-//            if (dX > 0) {
-//                /* Set your color for positive displacement */
-//
-//                // Draw Rect with varying right side, equal to displacement dX
-//                c.drawRect((float) itemView.getLeft(), (float) itemView.getTop(), dX,
-//                        (float) itemView.getBottom(), paint);
-//            } else {
-//                c.drawRect((float) itemView.getRight() + dX, (float) itemView.getTop(),
-//                        (float) itemView.getRight(), (float) itemView.getBottom(), paint);
-//            }
-            // Fade out the view as it is swiped out of the parent's bounds
-            final float alpha = ALPHA_FULL - Math.abs(dX) / (float) viewHolder.itemView.getWidth();
-            viewHolder.itemView.setAlpha(alpha);
-            viewHolder.itemView.setTranslationX(dX);
-//            super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+                // Fade out the view as it is swiped out of the parent's bounds
+//                final float alpha = ALPHA_FULL - Math.abs(dX) / (float) viewHolder.itemView.getWidth();
+//                viewHolder.itemView.setAlpha(alpha);
+                viewHolder.itemView.setTranslationX(dX);
+            }
         } else {
             super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
         }
@@ -129,11 +124,11 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
         super.clearView(recyclerView, viewHolder);
 
         viewHolder.itemView.setAlpha(ALPHA_FULL);
-
         if (viewHolder instanceof ItemTouchHelperViewHolder) {
             // Tell the view holder it's time to restore the idle state
             ItemTouchHelperViewHolder itemViewHolder = (ItemTouchHelperViewHolder) viewHolder;
             itemViewHolder.onItemClear();
+            backgroundContainer.hideBackground();
         }
     }
 }

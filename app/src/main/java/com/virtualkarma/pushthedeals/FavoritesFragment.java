@@ -37,6 +37,7 @@ public class FavoritesFragment extends Fragment implements FloatingActionButton.
     private RecyclerView favRecyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private FavoritesAsyncTask favoritesAsyncTask;
+    private BackgroundContainer backgroundContainer;
 
     private OnAddClickedListener callBack;
 
@@ -57,6 +58,7 @@ public class FavoritesFragment extends Fragment implements FloatingActionButton.
         // Inflate the layout for this fragment
         View rootview = inflater.inflate(R.layout.fragment_favorites, container, false);
 
+        backgroundContainer = (BackgroundContainer) rootview.findViewById(R.id.listViewBackground);
         favRecyclerView = (RecyclerView) rootview.findViewById(R.id.fav_recycler_view);
         layoutManager = new LinearLayoutManager(getActivity());
         favRecyclerView.setLayoutManager(layoutManager);
@@ -69,7 +71,8 @@ public class FavoritesFragment extends Fragment implements FloatingActionButton.
         floatingActionButton = (FloatingActionButton) rootview.findViewById(R.id.fab);
         floatingActionButton.setOnClickListener(this);
 
-        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(favRecyclerViewAdapter);
+        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback
+                (favRecyclerViewAdapter, backgroundContainer);
         itemTouchHelper = new ItemTouchHelper(callback);
         itemTouchHelper.attachToRecyclerView(favRecyclerView);
 

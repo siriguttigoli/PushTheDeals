@@ -1,6 +1,8 @@
 package com.virtualkarma.pushthedeals;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -143,12 +145,32 @@ public class DealsFragment extends Fragment implements
 //    }
 
     public void loadTaskCompleted(RSSFeed feed) {
-        dealsAdapter.setDealsFeed(feed);
-        dealsAdapter.notifyDataSetChanged();
+        if(feed.getItemCount() > 0 ){
+            dealsAdapter.setDealsFeed(feed);
+            dealsAdapter.notifyDataSetChanged();
+        }else{
+            showErrorDialog();
+        }
         if (progressBarItem != null)
             progressBarItem.setVisible(false);
         swipeRefreshLayout.setRefreshing(false);
 
+    }
+
+    private void showErrorDialog(){
+        AlertDialog.Builder builder= new AlertDialog.Builder(getActivity());
+        builder.setTitle(R.string.error_dialog_title);
+        builder.setMessage(R.string.error_dialog_msg);
+        builder.setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                getActivity().finish();
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
 

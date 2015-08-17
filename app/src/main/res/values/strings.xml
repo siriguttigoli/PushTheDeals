@@ -19,6 +19,14 @@
     <string name="share_chooser_text">Share with a friend</string>
     <string name="title_fragment_favorites">My Deals Sites</string>
     <string name="title_fragment_deal_site">Deal Sites</string>
+    <string name="about_content">PUSH THE DEALS! THE SMART WAY TO SHOP...\n\'PushTheDeals\'
+        helps you find the best online and in-store deals. Lot of deals to choose from.
+        Just add them to your list and see all the latest deals.</string>
+    <string name="error_dialog_title">Oops!!!</string>
+    <string name="error_dialog_msg">Sorry, there seems to be a problem with showing deals.</string>
+    <string name="dialog_ok">OK</string>
+    <string name="dialog_add_site_title">Add a site</string>
+    <string name="dialog_add_site_msg">Please add a site to your list to checkout the deals</string>
 
 
 

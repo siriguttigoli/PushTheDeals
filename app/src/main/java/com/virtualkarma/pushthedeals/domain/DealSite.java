@@ -20,11 +20,13 @@ public class DealSite {
     public DealSite(JSONObject dealSiteJsonObject) throws JSONException {
 
         if (dealSiteJsonObject.has("feed_name")) {
-            setName(dealSiteJsonObject.getString("feed_name"));
+            String name = dealSiteJsonObject.getString("feed_name");
+            setName(name.replace("\\",""));
         }
 
         if (dealSiteJsonObject.has("feed_url")) {
             setLink(dealSiteJsonObject.getString("feed_url"));
+
         }
 
         setNumOfDeals(0);

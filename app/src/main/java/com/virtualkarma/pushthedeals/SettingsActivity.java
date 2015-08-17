@@ -45,7 +45,8 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             case R.id.tell_friend_textview:
                 Intent intent = Utils.shareWithAFriend(getResources().getString(R.string
                                 .tell_friend_email_subject),
-                        getResources().getString(R.string.tell_friend_email_content),
+                        getResources().getString(R.string.tell_friend_email_content) + "https://play.google" +
+                                ".com/store/apps/details?id=" + this.getPackageName(),
                         getResources().getString(R.string.tell_friend_chooser_txt), getApplicationContext());
                 startActivity(intent);
                 break;

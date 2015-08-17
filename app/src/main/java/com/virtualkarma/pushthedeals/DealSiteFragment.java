@@ -78,9 +78,9 @@ public class DealSiteFragment extends Fragment implements AdapterView.OnItemClic
 
     private void showAddDialog(){
         AlertDialog.Builder builder= new AlertDialog.Builder(getActivity());
-        builder.setTitle("Add a site");
-        builder.setMessage("Please add a site to your list to checkout the deals");
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        builder.setTitle(R.string.dialog_add_site_title);
+        builder.setMessage(R.string.dialog_add_site_msg);
+        builder.setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
