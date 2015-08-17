@@ -23,59 +23,57 @@ import java.util.List;
 /**
  * Created by sirig on 7/14/15.
  */
-public class FavRecyclerViewAdapter extends RecyclerView.Adapter<FavRecyclerViewAdapter
-        .FavHolder> implements ItemTouchHelperAdapter {
+public class MyListRecyclerViewAdapter extends RecyclerView.Adapter<MyListRecyclerViewAdapter
+        .MyListHolder> implements ItemTouchHelperAdapter {
 
 
-    private static final String LOG_TAG = FavRecyclerViewAdapter.class.getSimpleName();
+    private static final String LOG_TAG = MyListRecyclerViewAdapter.class.getSimpleName();
     private static final int REQUEST_NUM_DEALS = 1;
-    private List<DealSite> favoritesList;
+    private List<DealSite> myDealSitesList;
     static private Activity activity;
     private BackgroundContainer backgroundContainer;
 
 
-    public FavRecyclerViewAdapter(List<DealSite> favList, Activity activity) {
-        favoritesList = favList;
+    public MyListRecyclerViewAdapter(List<DealSite> dealSiteList, Activity activity) {
+        myDealSitesList = dealSiteList;
         this.activity = activity;
 
     }
 
     @Override
-    public FavHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+    public MyListHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout
                 .deal_site_list_item, viewGroup, false);
 
-        FavHolder favHolder = new FavHolder(view, new FavHolder.RecyclerViewClickListener() {
+        MyListHolder holder = new MyListHolder(view, new MyListHolder.RecyclerViewClickListener() {
             @Override
             public void onItemClick(int position, View v) {
                 Intent intent = new Intent(activity, DealsActivity.class);
-                intent.putExtra(DealsFragment.DEAL_SITE_URL, favoritesList.get(position).getLink());
-                intent.putExtra(DealsFragment.DEAL_SITE_NAME, favoritesList.get(position).getName
+                intent.putExtra(DealsFragment.DEAL_SITE_URL, myDealSitesList.get(position).getLink());
+                intent.putExtra(DealsFragment.DEAL_SITE_NAME, myDealSitesList.get(position).getName
                         ());
                 activity.startActivity(intent);
             }
         });
-        return favHolder;
+        return holder;
     }
 
     @Override
-    public void onBindViewHolder(FavHolder favHolder, int i) {
-        favHolder.dealSiteNameText.setText(favoritesList.get(i).getName());
-//        favHolder.numDealsText.setVisibility(View.VISIBLE);
-//        favHolder.numDealsText.setText(String.valueOf(favoritesList.get(i).getNumOfDeals()));
-        favHolder.addImage.setVisibility(View.GONE);
+    public void onBindViewHolder(MyListHolder holder, int i) {
+        holder.dealSiteNameText.setText(myDealSitesList.get(i).getName());
+        holder.addImage.setVisibility(View.GONE);
     }
 
     @Override
     public int getItemCount() {
-        return favoritesList.size();
+        return myDealSitesList.size();
     }
 
-    public List<DealSite> getFavoritesList() {
-        return favoritesList;
+    public List<DealSite> getMyDealSitesList() {
+        return myDealSitesList;
     }
 
-    public static class FavHolder extends RecyclerView.ViewHolder implements View
+    public static class MyListHolder extends RecyclerView.ViewHolder implements View
             .OnClickListener, ItemTouchHelperViewHolder {
 
         private TextView dealSiteNameText, numDealsText;
@@ -83,7 +81,7 @@ public class FavRecyclerViewAdapter extends RecyclerView.Adapter<FavRecyclerView
         private RecyclerViewClickListener recyclerViewClickListener;
 
 
-        public FavHolder(View itemView, RecyclerViewClickListener listener) {
+        public MyListHolder(View itemView, RecyclerViewClickListener listener) {
             super(itemView);
             recyclerViewClickListener = listener;
             dealSiteNameText = (TextView) itemView.findViewById(R.id.dealsite_textview);
@@ -123,8 +121,8 @@ public class FavRecyclerViewAdapter extends RecyclerView.Adapter<FavRecyclerView
 
     @Override
     public void onItemDismiss(int position) {
-        deleteSite(favoritesList.get(position));
-        favoritesList.remove(position);
+        deleteSite(myDealSitesList.get(position));
+        myDealSitesList.remove(position);
         notifyItemRemoved(position);
     }
 

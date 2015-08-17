@@ -33,7 +33,7 @@ public class MyListFragment extends Fragment implements FloatingActionButton.OnC
     private static final String LOG_TAG = MyListFragment.class.getSimpleName();
 
     private FloatingActionButton floatingActionButton;
-    private FavRecyclerViewAdapter favRecyclerViewAdapter;
+    private MyListRecyclerViewAdapter myListRecyclerViewAdapter;
     private RecyclerView favRecyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private FavoritesAsyncTask favoritesAsyncTask;
@@ -62,8 +62,8 @@ public class MyListFragment extends Fragment implements FloatingActionButton.OnC
         favRecyclerView = (RecyclerView) rootview.findViewById(R.id.fav_recycler_view);
         layoutManager = new LinearLayoutManager(getActivity());
         favRecyclerView.setLayoutManager(layoutManager);
-        favRecyclerViewAdapter = new FavRecyclerViewAdapter(new ArrayList<DealSite>(), getActivity());
-        favRecyclerView.setAdapter(favRecyclerViewAdapter);
+        myListRecyclerViewAdapter = new MyListRecyclerViewAdapter(new ArrayList<DealSite>(), getActivity());
+        favRecyclerView.setAdapter(myListRecyclerViewAdapter);
         DividerItemDecoration itemDecoration = new DividerItemDecoration(getActivity(),
                 LinearLayoutManager.VERTICAL);
         favRecyclerView.addItemDecoration(itemDecoration);
@@ -72,7 +72,7 @@ public class MyListFragment extends Fragment implements FloatingActionButton.OnC
         floatingActionButton.setOnClickListener(this);
 
         ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback
-                (favRecyclerViewAdapter, backgroundContainer);
+                (myListRecyclerViewAdapter, backgroundContainer);
         itemTouchHelper = new ItemTouchHelper(callback);
         itemTouchHelper.attachToRecyclerView(favRecyclerView);
 
@@ -136,9 +136,9 @@ public class MyListFragment extends Fragment implements FloatingActionButton.OnC
         protected void onPostExecute(List<DealSite> dealSites) {
             super.onPostExecute(dealSites);
             Log.d(LOG_TAG, "Favorites - " + dealSites);
-            favRecyclerViewAdapter.getFavoritesList().clear();
-            favRecyclerViewAdapter.getFavoritesList().addAll(dealSites);
-            favRecyclerViewAdapter.notifyDataSetChanged();
+            myListRecyclerViewAdapter.getMyDealSitesList().clear();
+            myListRecyclerViewAdapter.getMyDealSitesList().addAll(dealSites);
+            myListRecyclerViewAdapter.notifyDataSetChanged();
 
         }
     }

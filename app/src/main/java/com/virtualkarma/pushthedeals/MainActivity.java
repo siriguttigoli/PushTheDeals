@@ -12,7 +12,7 @@ import android.view.MenuItem;
 import com.virtualkarma.pushthedeals.util.Utils;
 
 
-public class MainActivity extends AppCompatActivity implements FavoritesFragment
+public class MainActivity extends AppCompatActivity implements MyListFragment
         .OnAddClickedListener {
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity implements FavoritesFragment
             if (favoritesAvaiable) {
                 Log.d(LOG_TAG, "Add Favorites Fragment");
                 getSupportFragmentManager().beginTransaction().replace(R.id.container,
-                        new FavoritesFragment()).commit();
+                        new MyListFragment()).commit();
 
             } else {
                 getSupportFragmentManager().beginTransaction()

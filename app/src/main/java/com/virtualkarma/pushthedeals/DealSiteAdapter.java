@@ -106,7 +106,7 @@ public class DealSiteAdapter extends BaseAdapter {
                         @Override
                         public void run() {
                             if (activity instanceof MainActivity) {
-                                ((MainActivity) activity).switchContent(new FavoritesFragment());
+                                ((MainActivity) activity).switchContent(new MyListFragment());
                             }
                         }
                     });
