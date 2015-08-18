@@ -36,6 +36,5 @@
         android:src="@drawable/ic_add_white_24dp"
         app:fabSize="normal"
         app:layout_anchor="@id/coordinatorLayout"
-        app:layout_anchorGravity="bottom|right|end"
-        app:rippleColor="#fff03d72"/>
+        app:layout_anchorGravity="bottom|right|end"/>
 </android.support.design.widget.CoordinatorLayout>

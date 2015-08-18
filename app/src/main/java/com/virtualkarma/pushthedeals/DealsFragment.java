@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -127,6 +128,16 @@ public class DealsFragment extends Fragment implements
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        if (loadRSSFeedTask != null && loadRSSFeedTask.getStatus() == AsyncTask.Status.RUNNING) {
+            Log.d(LOG_TAG, "loadRSSFeedTask cancelled");
+            loadRSSFeedTask.cancel(true);
+        }
+
+    }
+
+    @Override
     public void onRefresh() {
         refreshContent();
     }
@@ -145,10 +156,10 @@ public class DealsFragment extends Fragment implements
 //    }
 
     public void loadTaskCompleted(RSSFeed feed) {
-        if(feed.getItemCount() > 0 ){
+        if (feed.getItemCount() > 0) {
             dealsAdapter.setDealsFeed(feed);
             dealsAdapter.notifyDataSetChanged();
-        }else{
+        } else {
             showErrorDialog();
         }
         if (progressBarItem != null)
@@ -157,8 +168,8 @@ public class DealsFragment extends Fragment implements
 
     }
 
-    private void showErrorDialog(){
-        AlertDialog.Builder builder= new AlertDialog.Builder(getActivity());
+    private void showErrorDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.error_dialog_title);
         builder.setMessage(R.string.error_dialog_msg);
         builder.setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {

@@ -74,7 +74,6 @@ public class DealsAdapter extends RecyclerView.Adapter<DealsAdapter.ViewHolder> 
 
         holder.dealDateTextView.setText(dealsFeed.getItem(position).getDate());
         String url = dealsFeed.getItem(position).getImgUrl();
-        Log.d(LOG_TAG, "Image Url - " + url);
         if (url == null || url.equals("") || dealsFeed.getItem(position).getImgHeight() == 1 ||
                 dealsFeed.getItem(position).getImgWidth() == 1) {
             holder.dealImage.setVisibility(View.GONE);

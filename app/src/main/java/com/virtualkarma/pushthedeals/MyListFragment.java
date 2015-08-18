@@ -36,7 +36,7 @@ public class MyListFragment extends Fragment implements FloatingActionButton.OnC
     private MyListRecyclerViewAdapter myListRecyclerViewAdapter;
     private RecyclerView favRecyclerView;
     private RecyclerView.LayoutManager layoutManager;
-    private FavoritesAsyncTask favoritesAsyncTask;
+    private MyListAsyncTask myListAsyncTask;
     private BackgroundContainer backgroundContainer;
 
     private OnAddClickedListener callBack;
@@ -56,7 +56,7 @@ public class MyListFragment extends Fragment implements FloatingActionButton.OnC
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootview = inflater.inflate(R.layout.fragment_favorites, container, false);
+        View rootview = inflater.inflate(R.layout.fragment_mylist, container, false);
 
         backgroundContainer = (BackgroundContainer) rootview.findViewById(R.id.listViewBackground);
         favRecyclerView = (RecyclerView) rootview.findViewById(R.id.fav_recycler_view);
@@ -97,11 +97,19 @@ public class MyListFragment extends Fragment implements FloatingActionButton.OnC
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         getActivity().setTitle(R.string.title_fragment_favorites);
-        favoritesAsyncTask = new FavoritesAsyncTask(getActivity());
+        myListAsyncTask = new MyListAsyncTask(getActivity());
         Log.d(LOG_TAG, "start fetch task");
-        favoritesAsyncTask.execute();
+        myListAsyncTask.execute();
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (myListAsyncTask != null && myListAsyncTask.getStatus() == AsyncTask.Status.RUNNING) {
+            Log.d(LOG_TAG, "myListAsyncTask cancelled");
+            myListAsyncTask.cancel(true);
+        }
+    }
 
     @Override
     public void onClick(View v) {
@@ -111,34 +119,39 @@ public class MyListFragment extends Fragment implements FloatingActionButton.OnC
     }
 
 
-    public class FavoritesAsyncTask extends AsyncTask<Void, Void, List<DealSite>> {
+    public class MyListAsyncTask extends AsyncTask<Void, Void, List<DealSite>> {
 
-        private final String LOG_TAG = FavoritesAsyncTask.class.getSimpleName();
+        private final String LOG_TAG = MyListAsyncTask.class.getSimpleName();
         Context context;
 
-        public FavoritesAsyncTask(Context context) {
+        public MyListAsyncTask(Context context) {
             this.context = context;
         }
 
         @Override
         protected List<DealSite> doInBackground(Void... params) {
-            List<DealSite> favList = new ArrayList<>();
-            DealSiteDao dealSiteDao = new DealSiteDao(context);
-            try {
-                favList = dealSiteDao.lookup();
-            } catch (Exception e) {
-                Log.e(LOG_TAG, e.getMessage());
+            List<DealSite> myList = new ArrayList<>();
+
+            if (!isCancelled()) {
+                DealSiteDao dealSiteDao = new DealSiteDao(context);
+                try {
+                    myList = dealSiteDao.lookup();
+                } catch (Exception e) {
+                    Log.e(LOG_TAG, e.getMessage());
+                }
             }
-            return favList;
+            return myList;
         }
 
         @Override
         protected void onPostExecute(List<DealSite> dealSites) {
             super.onPostExecute(dealSites);
-            Log.d(LOG_TAG, "Favorites - " + dealSites);
-            myListRecyclerViewAdapter.getMyDealSitesList().clear();
-            myListRecyclerViewAdapter.getMyDealSitesList().addAll(dealSites);
-            myListRecyclerViewAdapter.notifyDataSetChanged();
+            if (!isCancelled()) {
+                Log.d(LOG_TAG, "My List - " + dealSites);
+                myListRecyclerViewAdapter.getMyDealSitesList().clear();
+                myListRecyclerViewAdapter.getMyDealSitesList().addAll(dealSites);
+                myListRecyclerViewAdapter.notifyDataSetChanged();
+            }
 
         }
     }

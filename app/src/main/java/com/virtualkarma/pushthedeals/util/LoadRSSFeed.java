@@ -45,34 +45,22 @@ public class LoadRSSFeed extends AsyncTask<Void, Void, RSSFeed> {
     protected RSSFeed doInBackground(Void... params) {
         // Parse the RSSFeed and save the object
         Log.d(LOG_TAG, "Url - " + RSSFEEDURL);
-        feed = new DOMParser().parseXML(RSSFEEDURL);
+        if (!isCancelled())
+            feed = new DOMParser().parseXML(RSSFEEDURL);
         return feed;
     }
 
-    @Override
-    protected void onPreExecute() {
-//		// Create a new dialog
-//		refreshDialog = new ProgressDialog(new ContextThemeWrapper(parent, R.style.AlertBox));
-//		// Inform of the refresh
-//		refreshDialog.setMessage("Loading feed...");
-//		// Spin the wheel whilst the dialog exists
-//		refreshDialog.setIndeterminate(false);
-//		// Don't exit the dialog when the screen is touched
-//		refreshDialog.setCanceledOnTouchOutside(false);
-//		// Don't exit the dialog when back is pressed
-//		refreshDialog.setCancelable(true);
-//		// Show the dialog
-//		refreshDialog.show();
-    }
 
     @Override
     protected void onPostExecute(RSSFeed result) {
         super.onPostExecute(result);
+        if (!isCancelled()) {
 
-        DealsFragment dealsFragment = (DealsFragment) activity.getSupportFragmentManager()
-                .findFragmentByTag("deals");
+            DealsFragment dealsFragment = (DealsFragment) activity.getSupportFragmentManager()
+                    .findFragmentByTag("deals");
 
-        dealsFragment.loadTaskCompleted(result);
+            dealsFragment.loadTaskCompleted(result);
+        }
 
     }
 }

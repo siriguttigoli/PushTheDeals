@@ -8,6 +8,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -61,6 +62,16 @@ public class DealSiteFragment extends Fragment implements AdapterView.OnItemClic
 
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (fetchDealsSitesTask != null && fetchDealsSitesTask.getStatus() == AsyncTask.Status.RUNNING) {
+            Log.d(LOG_TAG, "Task Cancelled");
+            fetchDealsSitesTask.cancel(true);
+        }
+
+    }
+
     private boolean isFirstTime() {
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -69,15 +80,15 @@ public class DealSiteFragment extends Fragment implements AdapterView.OnItemClic
 
     }
 
-    private void setFirstTime(){
+    private void setFirstTime() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean(FIRST_TIME_DEALSITE, false);
         editor.commit();
     }
 
-    private void showAddDialog(){
-        AlertDialog.Builder builder= new AlertDialog.Builder(getActivity());
+    private void showAddDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.dialog_add_site_title);
         builder.setMessage(R.string.dialog_add_site_msg);
         builder.setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
@@ -90,7 +101,6 @@ public class DealSiteFragment extends Fragment implements AdapterView.OnItemClic
         AlertDialog dialog = builder.create();
         dialog.show();
     }
-
 
 
     @Override

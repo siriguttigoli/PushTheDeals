@@ -43,18 +43,19 @@ public class FetchDealsSitesTask extends AsyncTask<Void, Void, List<DealSite>> {
     protected List<DealSite> doInBackground(Void... params) {
 
         List<DealSite> dealSiteList = new ArrayList<>();
-        boolean downloadFromNetwork = shouldDownloadFromNetwork();
-        try {
-            if (downloadFromNetwork) {
-                dealSiteList = lookupDealSitesFromNetwork();
-            } else {
-                dealSiteList = lookupDealSites();
+        if (!isCancelled()) {
+            boolean downloadFromNetwork = shouldDownloadFromNetwork();
+            try {
+                if (downloadFromNetwork) {
+                    dealSiteList = lookupDealSitesFromNetwork();
+                } else {
+                    dealSiteList = lookupDealSites();
+                }
+            } catch (JSONException e) {
+                Log.e(LOG_TAG, "Json Error" + e.getMessage());
             }
-        } catch (JSONException e) {
-            Log.e(LOG_TAG, "Json Error" + e.getMessage());
+
         }
-
-
         return dealSiteList;
     }
 
@@ -247,9 +248,11 @@ public class FetchDealsSitesTask extends AsyncTask<Void, Void, List<DealSite>> {
     @Override
     protected void onPostExecute(List<DealSite> dealSitesList) {
         super.onPostExecute(dealSitesList);
-        DealSiteFragment dealSiteFragment = (DealSiteFragment) activity.getSupportFragmentManager()
-                .findFragmentByTag("deal_site");
+        if (!isCancelled()) {
+            DealSiteFragment dealSiteFragment = (DealSiteFragment) activity.getSupportFragmentManager()
+                    .findFragmentByTag("deal_site");
 
-        dealSiteFragment.onFetchTaskCompleted(dealSitesList);
+            dealSiteFragment.onFetchTaskCompleted(dealSitesList);
+        }
     }
 }
